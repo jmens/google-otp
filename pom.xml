@@ -7,6 +7,7 @@
 	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>google-otp</name>
+	<description>Easy to use Google-Authenticator library</description>
 
 	<licenses>
 		<license>
