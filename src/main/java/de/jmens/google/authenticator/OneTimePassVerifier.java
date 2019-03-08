@@ -46,8 +46,13 @@ public class OneTimePassVerifier {
 				.anyMatch(i -> code == getCode(decodedSecret, (timestamp - i)));
 	}
 
-	private int getCode(byte[] key, long t) {
-		final byte[] data = buildData(t);
+	public long getCode() {
+		final byte[] decodedSecret = new Base32().decode(secret);
+		return getCode(decodedSecret, timestamp);
+	}
+
+	private int getCode(byte[] key, long timestamp) {
+		final byte[] data = buildData(timestamp);
 		final byte[] hash = hashData(key, data);
 		return truncateHash(hash);
 	}
@@ -64,10 +69,10 @@ public class OneTimePassVerifier {
 		}
 	}
 
-	private byte[] buildData(long t) {
+	private byte[] buildData(long timestamp) {
 		final byte[] data = new byte[8];
 
-		long value = t / 30;
+		long value = timestamp / 30;
 		for (int i = 8; i-- > 0; value >>>= 8) {
 			data[i] = (byte) value;
 		}
