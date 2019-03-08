@@ -8,6 +8,7 @@
 	<packaging>jar</packaging>
 	<name>google-otp</name>
 	<description>Easy to use Google-Authenticator library</description>
+	<url>https://github.com/jmens/google-otp</url>
 
 	<licenses>
 		<license>
