@@ -11,7 +11,7 @@ class OneTimePassVerifierTest {
 	public void testVerifier() {
 		final long code = 475528;
 		final String secret = "U5JRXO44N7RED4YE";
-		final long timestamp = 1551803414;
+		final long timestamp = 1551803414000l;
 
 		assertThat(
 				OneTimePassVerifier
@@ -27,7 +27,7 @@ class OneTimePassVerifierTest {
 	public void testCodeGenerator() {
 		final long code = 475528;
 		final String secret = "U5JRXO44N7RED4YE";
-		final long timestamp = 1551803414;
+		final long timestamp = 1551803414000l;
 
 		assertThat(
 				OneTimePassVerifier

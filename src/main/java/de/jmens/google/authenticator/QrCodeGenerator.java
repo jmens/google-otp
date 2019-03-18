@@ -1,5 +1,6 @@
 package de.jmens.google.authenticator;
 
+import static java.net.URLEncoder.encode;
 import static java.text.MessageFormat.format;
 
 import com.google.zxing.BarcodeFormat;
@@ -23,7 +24,11 @@ public class QrCodeGenerator {
 
 		try (final ByteArrayOutputStream output = new ByteArrayOutputStream()) {
 
-			final String text = URLEncoder.encode(format("otpauth://totp/{0}?secret={1}", application, secret), "UTF-8");
+			final String text = format(
+					"otpauth://totp/{0}?secret={1}",
+					encode(application, "UTF-8"),
+					encode(secret, "UTF-8")
+			);
 
 			final Map<EncodeHintType, Object> hintMap = new EnumMap<>(EncodeHintType.class);
 			hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
@@ -34,7 +39,6 @@ public class QrCodeGenerator {
 			final BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, size, size, hintMap);
 
 			MatrixToImageWriter.writeToStream(bitMatrix, "PNG", output);
-			MatrixToImageWriter.writeToPath(bitMatrix, "PNG", Paths.get("/tmp/foo.png"));
 
 			return Optional.ofNullable(output.toByteArray());
 

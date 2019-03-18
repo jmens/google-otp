@@ -1,15 +1,8 @@
 package de.jmens.google.authenticator;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.stream.IntStream;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Base32;
-
 public class OneTimePassVerifier {
 
+	private static final OtpGenerator algorithm = new OtpGenerator();
 	public static OneTimePassVerifier newVerifier(String secret) {
 		return new OneTimePassVerifier(secret.getBytes());
 	}
@@ -23,7 +16,7 @@ public class OneTimePassVerifier {
 	}
 
 	private byte[] secret;
-	private long timestamp = new Date().getTime();
+	private long timestamp = System.currentTimeMillis();
 	private int window = 3;
 
 	public OneTimePassVerifier withTimeWindow(int seconds) {
@@ -37,61 +30,10 @@ public class OneTimePassVerifier {
 	}
 
 	public boolean checkCode(long code) {
-
-		final byte[] decodedSecret = new Base32().decode(secret);
-
-		return IntStream
-				.range(0, window)
-				.boxed()
-				.anyMatch(i -> code == getCode(decodedSecret, (timestamp - i)));
+		return algorithm.verify(new String(secret), code, timestamp, window);
 	}
 
 	public long getCode() {
-		final byte[] decodedSecret = new Base32().decode(secret);
-		return getCode(decodedSecret, timestamp);
+		return algorithm.getCode(new String(secret), timestamp);
 	}
-
-	private int getCode(byte[] key, long timestamp) {
-		final byte[] data = buildData(timestamp);
-		final byte[] hash = hashData(key, data);
-		return truncateHash(hash);
-	}
-
-	private byte[] hashData(byte[] key, byte[] data) {
-		try {
-			final SecretKeySpec signKey = new SecretKeySpec(key, "HmacSHA1");
-			final Mac mac = Mac.getInstance("HmacSHA1");
-			mac.init(signKey);
-
-			return mac.doFinal(data);
-		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
-			throw new RuntimeException("Failed to verify code", e);
-		}
-	}
-
-	private byte[] buildData(long timestamp) {
-		final byte[] data = new byte[8];
-
-		long value = timestamp / 30;
-		for (int i = 8; i-- > 0; value >>>= 8) {
-			data[i] = (byte) value;
-		}
-		return data;
-	}
-
-	private int truncateHash(byte[] hash) {
-		final int offset = hash[20 - 1] & 0xF;
-
-		long result = 0;
-		for (int i = 0; i < 4; ++i) {
-			result <<= 8;
-			result |= (hash[offset + i] & 0xFF);
-		}
-
-		result &= 0x7FFFFFFF;
-		result %= 1000000;
-
-		return (int)result;
-	}
-
 }
