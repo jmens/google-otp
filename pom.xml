@@ -4,7 +4,7 @@
 
 	<groupId>de.jmens</groupId>
 	<artifactId>google-otp</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.4</version>
 	<packaging>jar</packaging>
 	<name>google-otp</name>
 	<description>Easy to use Google-Authenticator library</description>
@@ -44,7 +44,7 @@
 		<connection>scm:git:git@github.com:jmens/google-otp.git</connection>
 		<developerConnection>scm:git:git@github.com:jmens/google-otp.git</developerConnection>
 		<url>https://github.com/jmens/google-otp</url>
-		<tag>HEAD</tag>
+		<tag>google-otp-0.0.4</tag>
 	</scm>
 
 	<properties>
